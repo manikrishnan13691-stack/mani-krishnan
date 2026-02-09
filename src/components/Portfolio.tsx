@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
@@ -42,10 +42,129 @@ const projects = [
   },
 ];
 
+const ProjectCard = ({ project, index, isInView }: { project: typeof projects[0]; index: number; isInView: boolean }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+    setIsHovered(false);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer"
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: 0.1 * index }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX: isHovered ? rotateX : 0,
+        rotateY: isHovered ? rotateY : 0,
+        transformStyle: "preserve-3d",
+      }}
+      data-cursor="pointer"
+      data-cursor-text="View"
+    >
+      {/* Image with zoom effect */}
+      <motion.img
+        src={project.image}
+        alt={project.title}
+        className="w-full h-full object-cover"
+        animate={{ scale: isHovered ? 1.1 : 1 }}
+        transition={{ duration: 0.6 }}
+      />
+
+      {/* Gradient overlay */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.4 }}
+      />
+
+      {/* Content */}
+      <motion.div
+        className="absolute inset-0 p-6 flex flex-col justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.p
+          className="text-primary text-sm font-medium mb-2"
+          initial={{ y: 20, opacity: 0 }}
+          animate={isHovered ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          {project.category}
+        </motion.p>
+        <div className="flex items-center justify-between">
+          <motion.h3
+            className="font-display font-semibold text-xl text-foreground"
+            initial={{ y: 20, opacity: 0 }}
+            animate={isHovered ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+            transition={{ duration: 0.3, delay: 0.15 }}
+          >
+            {project.title}
+          </motion.h3>
+          <motion.div
+            className="w-10 h-10 rounded-full bg-primary flex items-center justify-center"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={isHovered ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            whileHover={{ scale: 1.2 }}
+          >
+            <ArrowUpRight className="w-5 h-5 text-primary-foreground" />
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Border glow */}
+      <motion.div
+        className="absolute inset-0 rounded-2xl border-2 border-primary/0"
+        animate={{ borderColor: isHovered ? "hsl(15 90% 60% / 0.5)" : "hsl(15 90% 60% / 0)" }}
+        transition={{ duration: 0.3 }}
+      />
+
+      {/* Shine effect */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0"
+        animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? "100%" : "-100%" }}
+        transition={{ duration: 0.6 }}
+      />
+    </motion.div>
+  );
+};
+
 const Portfolio = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   return (
     <section id="portfolio" className="section-padding" ref={ref}>
@@ -66,54 +185,9 @@ const Portfolio = () => {
         </motion.div>
 
         {/* Projects Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ perspective: "1000px" }}>
           {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
-              onMouseEnter={() => setHoveredId(project.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              {/* Image */}
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              {/* Content */}
-              <motion.div
-                className="absolute inset-0 p-6 flex flex-col justify-end"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: hoveredId === project.id ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <p className="text-primary text-sm font-medium mb-2">
-                  {project.category}
-                </p>
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display font-semibold text-xl text-foreground">
-                    {project.title}
-                  </h3>
-                  <motion.div
-                    className="w-10 h-10 rounded-full bg-primary flex items-center justify-center"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <ArrowUpRight className="w-5 h-5 text-primary-foreground" />
-                  </motion.div>
-                </div>
-              </motion.div>
-
-              {/* Border glow on hover */}
-              <div className="absolute inset-0 rounded-2xl border-2 border-primary/0 group-hover:border-primary/50 transition-colors duration-500" />
-            </motion.div>
+            <ProjectCard key={project.id} project={project} index={index} isInView={isInView} />
           ))}
         </div>
 
@@ -124,9 +198,22 @@ const Portfolio = () => {
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ delay: 0.8 }}
         >
-          <button className="px-8 py-4 border border-border text-foreground font-semibold rounded-full hover:bg-secondary transition-colors duration-300">
-            View All Projects
-          </button>
+          <motion.button
+            className="px-8 py-4 border border-border text-foreground font-semibold rounded-full relative overflow-hidden group"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="relative z-10 group-hover:text-background transition-colors duration-300">
+              View All Projects
+            </span>
+            <motion.span
+              className="absolute inset-0 bg-foreground"
+              initial={{ scaleX: 0 }}
+              whileHover={{ scaleX: 1 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              style={{ originX: 0 }}
+            />
+          </motion.button>
         </motion.div>
       </div>
     </section>

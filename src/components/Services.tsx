@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Palette, PenTool, Monitor, Camera, Layers, Sparkles } from "lucide-react";
 
 const services = [
@@ -39,6 +39,7 @@ const services = [
 const Services = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
     <section id="services" className="section-padding bg-card/50" ref={ref}>
@@ -50,9 +51,14 @@ const Services = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-primary font-medium tracking-widest uppercase text-sm mb-4">
+          <motion.p
+            className="text-primary font-medium tracking-widest uppercase text-sm mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+          >
             What I Do
-          </p>
+          </motion.p>
           <h2 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl">
             Services & <span className="text-gradient">Expertise</span>
           </h2>
@@ -63,20 +69,69 @@ const Services = () => {
           {services.map((service, index) => (
             <motion.div
               key={service.title}
-              className="group p-8 rounded-2xl bg-background border border-border hover:border-primary/50 transition-all duration-500 cursor-pointer hover-lift"
+              className="group relative p-8 rounded-2xl bg-background border border-border transition-all duration-500 cursor-pointer"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.1 * index }}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              whileHover={{
+                y: -8,
+                borderColor: "hsl(15 90% 60% / 0.5)",
+              }}
+              data-cursor="pointer"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:scale-110 transition-all duration-500">
-                <service.icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors duration-500" />
-              </div>
-              <h3 className="font-display font-semibold text-xl mb-3 group-hover:text-primary transition-colors duration-300">
+              {/* Background glow effect */}
+              <motion.div
+                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent opacity-0"
+                animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
+                transition={{ duration: 0.3 }}
+              />
+
+              {/* Icon with rotation on hover */}
+              <motion.div
+                className="relative w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 overflow-hidden"
+                whileHover={{ scale: 1.1 }}
+                animate={{
+                  backgroundColor: hoveredIndex === index ? "hsl(15 90% 60%)" : "hsl(15 90% 60% / 0.1)",
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  animate={{ rotate: hoveredIndex === index ? 360 : 0 }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                >
+                  <service.icon
+                    className={`w-7 h-7 transition-colors duration-300 ${
+                      hoveredIndex === index ? "text-primary-foreground" : "text-primary"
+                    }`}
+                  />
+                </motion.div>
+              </motion.div>
+
+              {/* Title with underline animation */}
+              <h3 className="relative font-display font-semibold text-xl mb-3 inline-block">
                 {service.title}
+                <motion.span
+                  className="absolute -bottom-1 left-0 h-0.5 bg-primary"
+                  initial={{ width: 0 }}
+                  animate={{ width: hoveredIndex === index ? "100%" : 0 }}
+                  transition={{ duration: 0.3 }}
+                />
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+
+              <p className="text-muted-foreground leading-relaxed relative">
                 {service.description}
               </p>
+
+              {/* Corner accent */}
+              <motion.div
+                className="absolute top-0 right-0 w-16 h-16 overflow-hidden rounded-tr-2xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 -translate-y-1/2 translate-x-1/2 bg-primary/20 rounded-full" />
+              </motion.div>
             </motion.div>
           ))}
         </div>

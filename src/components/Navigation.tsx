@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import MagneticButton from "./MagneticButton";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -33,34 +34,74 @@ const Navigation = () => {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex items-center justify-between">
           {/* Logo */}
-          <a href="#" className="font-display font-bold text-2xl text-gradient">
-            AR.
-          </a>
+          <MagneticButton href="#">
+            <span className="font-display font-bold text-2xl text-gradient">AR.</span>
+          </MagneticButton>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <a key={link.href} href={link.href} className="nav-link text-sm tracking-wide">
+            {navLinks.map((link, index) => (
+              <motion.a
+                key={link.href}
+                href={link.href}
+                className="relative text-muted-foreground hover:text-foreground text-sm tracking-wide transition-colors duration-300 group"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                whileHover={{ y: -2 }}
+              >
                 {link.label}
-              </a>
+                <motion.span
+                  className="absolute -bottom-1 left-0 h-0.5 bg-primary"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.a>
             ))}
           </div>
 
           {/* CTA Button */}
-          <a
-            href="#contact"
-            className="hidden md:block px-6 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-full hover:scale-105 transition-transform duration-300"
-          >
-            Hire Me
-          </a>
+          <MagneticButton href="#contact" className="hidden md:block">
+            <motion.span
+              className="inline-block px-6 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-full relative overflow-hidden"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10">Hire Me</span>
+            </motion.span>
+          </MagneticButton>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-foreground"
+          <motion.button
+            className="md:hidden text-foreground relative w-10 h-10 flex items-center justify-center"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            whileTap={{ scale: 0.9 }}
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+            <AnimatePresence mode="wait">
+              {isMobileMenuOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X size={24} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu size={24} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
         </div>
       </motion.nav>
 
@@ -68,35 +109,48 @@ const Navigation = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-lg flex items-center justify-center md:hidden"
+            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg flex items-center justify-center md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
+            {/* Background decoration */}
+            <motion.div
+              className="absolute top-20 right-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              transition={{ duration: 0.5 }}
+            />
+
             <div className="flex flex-col items-center gap-8">
               {navLinks.map((link, index) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  className="font-display text-3xl font-semibold hover:text-primary transition-colors"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ delay: index * 0.1 }}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </motion.a>
+                <div key={link.href} className="overflow-hidden">
+                  <motion.a
+                    href={link.href}
+                    className="font-display text-4xl font-semibold hover:text-primary transition-colors block"
+                    initial={{ y: 60, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 60, opacity: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.4 }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    whileHover={{ x: 10 }}
+                  >
+                    {link.label}
+                  </motion.a>
+                </div>
               ))}
               <motion.a
                 href="#contact"
                 className="mt-4 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-full"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ delay: 0.4 }}
+                initial={{ y: 60, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 60, opacity: 0 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
                 onClick={() => setIsMobileMenuOpen(false)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Hire Me
               </motion.a>
