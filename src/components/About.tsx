@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
+import aboutAvatar from "@/assets/about-avatar.jpg";
 
 const About = () => {
   const ref = useRef(null);
@@ -27,8 +28,8 @@ const About = () => {
             <div className="relative aspect-[4/5] rounded-2xl overflow-hidden card-elevated">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=750&fit=crop"
-                alt="Alex Rivera - Graphic Designer"
+                src={aboutAvatar}
+                alt="SK - Graphic Designer"
                 className="w-full h-full object-cover"
               />
             </div>
