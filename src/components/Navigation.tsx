@@ -35,7 +35,7 @@ const Navigation = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex items-center justify-between">
           {/* Logo */}
           <MagneticButton href="#">
-            <span className="font-display font-bold text-2xl text-gradient">AR.</span>
+            <span className="font-display font-bold text-2xl text-gradient">SK.</span>
           </MagneticButton>
 
           {/* Desktop Navigation */}

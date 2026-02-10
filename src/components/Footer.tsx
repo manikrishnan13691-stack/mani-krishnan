@@ -16,7 +16,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Logo */}
           <MagneticButton href="#">
-            <span className="font-display font-bold text-3xl text-gradient">AR.</span>
+            <span className="font-display font-bold text-3xl text-gradient">SK.</span>
           </MagneticButton>
 
           {/* Social Links */}
