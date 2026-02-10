@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
@@ -7,20 +8,30 @@ import Portfolio from "@/components/Portfolio";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import CursorFollower from "@/components/CursorFollower";
+import Preloader from "@/components/Preloader";
 
 const Index = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handlePreloaderComplete = useCallback(() => {
+    setIsLoading(false);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background cursor-none md:cursor-none">
-      <CursorFollower />
-      <Navigation />
-      <Hero />
-      <About />
-      <Services />
-      <Marquee />
-      <Portfolio />
-      <Contact />
-      <Footer />
-    </div>
+    <>
+      {isLoading && <Preloader onComplete={handlePreloaderComplete} />}
+      <div className={`min-h-screen bg-background cursor-none md:cursor-none ${isLoading ? "overflow-hidden h-screen" : ""}`}>
+        <CursorFollower />
+        <Navigation />
+        <Hero />
+        <About />
+        <Services />
+        <Marquee />
+        <Portfolio />
+        <Contact />
+        <Footer />
+      </div>
+    </>
   );
 };
 
