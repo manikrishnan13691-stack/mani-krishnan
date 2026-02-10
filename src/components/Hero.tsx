@@ -70,7 +70,7 @@ const Hero = () => {
             animate={{ y: 0 }}
             transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
           >
-            Hello, I'm Alex Rivera
+            Hello, I'm SK
           </motion.p>
         </motion.div>
 

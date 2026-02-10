@@ -45,7 +45,7 @@ const Footer = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            © 2024 Alex Rivera. All rights reserved.
+            © 2024 SK. All rights reserved.
           </motion.p>
         </div>
       </div>
