@@ -8,7 +8,7 @@ const About = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const stats = [
-    { value: "8+", label: "Years Experience" },
+    { value: "4+", label: "Years Experience" },
     { value: "150+", label: "Projects Completed" },
     { value: "50+", label: "Happy Clients" },
     { value: "12", label: "Awards Won" },
@@ -55,8 +55,8 @@ const About = () => {
               <span className="text-gradient">Visual Reality</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-              I'm a passionate graphic designer based in New York, specializing in 
-              brand identity, digital design, and creative direction. With over 8 years 
+              I'm a passionate graphic designer based in Chennai, specializing in 
+              brand identity, digital design, and creative direction. With over 4 years 
               of experience, I help businesses tell their stories through compelling 
               visual narratives.
             </p>
