@@ -1,59 +1,10 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
+import { projects, type Project } from "@/data/projects";
 
-const projects = [
-  {
-    id: 1,
-    title: "Lumina Brand Identity",
-    category: "Branding",
-    year: "2024",
-    description: "A complete visual identity system for a luxury lighting brand.",
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=600&fit=crop",
-  },
-  {
-    id: 2,
-    title: "Velocity App Design",
-    category: "UI/UX",
-    year: "2024",
-    description: "End-to-end mobile experience for a fitness tracking platform.",
-    image: "https://images.unsplash.com/photo-1545235617-9465d2a55698?w=800&h=600&fit=crop",
-  },
-  {
-    id: 3,
-    title: "Horizon Packaging",
-    category: "Packaging",
-    year: "2023",
-    description: "Sustainable packaging design for an eco-conscious skincare line.",
-    image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&h=600&fit=crop",
-  },
-  {
-    id: 4,
-    title: "Echo Music Festival",
-    category: "Event Design",
-    year: "2023",
-    description: "Full creative direction for an underground electronic music festival.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
-  },
-  {
-    id: 5,
-    title: "Verde Organic",
-    category: "Branding",
-    year: "2023",
-    description: "Farm-to-table restaurant identity with organic visual language.",
-    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&h=600&fit=crop",
-  },
-  {
-    id: 6,
-    title: "Pulse Fitness App",
-    category: "UI/UX",
-    year: "2022",
-    description: "Health and wellness platform with gamified workout experiences.",
-    image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop",
-  },
-];
-
-const ProjectCard = ({ project, index, isInView }: { project: typeof projects[0]; index: number; isInView: boolean }) => {
+const ProjectCard = ({ project, index, isInView }: { project: Project; index: number; isInView: boolean }) => {
   const [isHovered, setIsHovered] = useState(false);
   const isEven = index % 2 === 0;
 
@@ -65,8 +16,9 @@ const ProjectCard = ({ project, index, isInView }: { project: typeof projects[0]
       transition={{ duration: 0.8, delay: 0.15 * index, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Horizontal layout card */}
-      <div
-        className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} gap-0 md:gap-0 items-stretch cursor-pointer`}
+      <Link
+        to={`/project/${project.slug}`}
+        className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} gap-0 md:gap-0 items-stretch cursor-pointer no-underline`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         data-cursor="pointer"
@@ -184,7 +136,7 @@ const ProjectCard = ({ project, index, isInView }: { project: typeof projects[0]
             <ExternalLink className="w-4 h-4" />
           </motion.div>
         </div>
-      </div>
+      </Link>
 
       {/* Separator line */}
       {index < projects.length - 1 && (
