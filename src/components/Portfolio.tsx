@@ -1,233 +1,261 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ExternalLink } from "lucide-react";
 
 const projects = [
   {
     id: 1,
     title: "Lumina Brand Identity",
     category: "Branding",
-    color: "from-[hsl(15,90%,60%)] to-[hsl(35,95%,55%)]",
-    accentBg: "bg-[hsl(15,90%,60%)]/15",
+    year: "2024",
+    description: "A complete visual identity system for a luxury lighting brand.",
     image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=600&fit=crop",
   },
   {
     id: 2,
     title: "Velocity App Design",
     category: "UI/UX",
-    color: "from-[hsl(260,80%,65%)] to-[hsl(290,70%,55%)]",
-    accentBg: "bg-[hsl(260,80%,65%)]/15",
+    year: "2024",
+    description: "End-to-end mobile experience for a fitness tracking platform.",
     image: "https://images.unsplash.com/photo-1545235617-9465d2a55698?w=800&h=600&fit=crop",
   },
   {
     id: 3,
     title: "Horizon Packaging",
     category: "Packaging",
-    color: "from-[hsl(170,70%,45%)] to-[hsl(140,60%,50%)]",
-    accentBg: "bg-[hsl(170,70%,45%)]/15",
+    year: "2023",
+    description: "Sustainable packaging design for an eco-conscious skincare line.",
     image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&h=600&fit=crop",
   },
   {
     id: 4,
     title: "Echo Music Festival",
     category: "Event Design",
-    color: "from-[hsl(330,80%,60%)] to-[hsl(350,90%,55%)]",
-    accentBg: "bg-[hsl(330,80%,60%)]/15",
+    year: "2023",
+    description: "Full creative direction for an underground electronic music festival.",
     image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
   },
   {
     id: 5,
     title: "Verde Organic",
     category: "Branding",
-    color: "from-[hsl(45,90%,55%)] to-[hsl(25,85%,55%)]",
-    accentBg: "bg-[hsl(45,90%,55%)]/15",
+    year: "2023",
+    description: "Farm-to-table restaurant identity with organic visual language.",
     image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&h=600&fit=crop",
   },
   {
     id: 6,
     title: "Pulse Fitness App",
     category: "UI/UX",
-    color: "from-[hsl(200,85%,55%)] to-[hsl(220,80%,60%)]",
-    accentBg: "bg-[hsl(200,85%,55%)]/15",
+    year: "2022",
+    description: "Health and wellness platform with gamified workout experiences.",
     image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop",
   },
 ];
 
 const ProjectCard = ({ project, index, isInView }: { project: typeof projects[0]; index: number; isInView: boolean }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
-  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["8deg", "-8deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-8deg", "8deg"]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    x.set((e.clientX - rect.left) / rect.width - 0.5);
-    y.set((e.clientY - rect.top) / rect.height - 0.5);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-    setIsHovered(false);
-  };
-
-  // Alternating layout: large cards take 2 cols
-  const isLarge = index === 0 || index === 3;
+  const isEven = index % 2 === 0;
 
   return (
     <motion.div
-      ref={cardRef}
-      className={`group relative rounded-3xl overflow-hidden cursor-pointer ${
-        isLarge ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/3]"
-      }`}
-      initial={{ opacity: 0, y: 80, scale: 0.9 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ duration: 0.7, delay: 0.1 * index, ease: [0.25, 0.4, 0.25, 1] }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateX: isHovered ? rotateX : 0,
-        rotateY: isHovered ? rotateY : 0,
-        transformStyle: "preserve-3d",
-      }}
-      data-cursor="pointer"
-      data-cursor-text="View"
+      className="group relative"
+      initial={{ opacity: 0, y: 100 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, delay: 0.15 * index, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Image */}
-      <motion.img
-        src={project.image}
-        alt={project.title}
-        className="w-full h-full object-cover"
-        animate={{ scale: isHovered ? 1.15 : 1 }}
-        transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
-      />
-
-      {/* Colorful gradient overlay */}
-      <motion.div
-        className={`absolute inset-0 bg-gradient-to-br ${project.color} mix-blend-multiply`}
-        animate={{ opacity: isHovered ? 0.75 : 0.3 }}
-        transition={{ duration: 0.5 }}
-      />
-
-      {/* Dark bottom gradient for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-
-      {/* Floating number */}
-      <motion.span
-        className="absolute top-6 left-6 font-display font-bold text-7xl text-foreground/10"
-        animate={{ opacity: isHovered ? 0.3 : 0.1, y: isHovered ? -5 : 0 }}
-        transition={{ duration: 0.4 }}
+      {/* Horizontal layout card */}
+      <div
+        className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} gap-0 md:gap-0 items-stretch cursor-pointer`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        data-cursor="pointer"
+        data-cursor-text="View"
       >
-        {String(index + 1).padStart(2, "0")}
-      </motion.span>
+        {/* Image side */}
+        <div className="relative w-full md:w-[55%] overflow-hidden rounded-2xl md:rounded-3xl aspect-[4/3] md:aspect-auto md:min-h-[420px]">
+          <motion.img
+            src={project.image}
+            alt={project.title}
+            className="w-full h-full object-cover"
+            animate={{ scale: isHovered ? 1.08 : 1 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          />
 
-      {/* Category pill */}
-      <motion.div
-        className={`absolute top-6 right-6 ${project.accentBg} backdrop-blur-md px-4 py-1.5 rounded-full`}
-        animate={{ y: isHovered ? 0 : -10, opacity: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.4, delay: 0.05 }}
-      >
-        <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
-          {project.category}
-        </span>
-      </motion.div>
+          {/* Overlay on hover */}
+          <motion.div
+            className="absolute inset-0 bg-background/40 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.4 }}
+          />
 
-      {/* Content bottom */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-        <motion.h3
-          className="font-display font-bold text-2xl md:text-3xl text-foreground mb-2"
-          animate={{ y: isHovered ? -4 : 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          {project.title}
-        </motion.h3>
+          {/* Floating index number */}
+          <motion.span
+            className="absolute top-6 left-6 font-display font-extrabold text-8xl md:text-9xl text-foreground/[0.04] select-none leading-none"
+            animate={{ 
+              opacity: isHovered ? 0.12 : 0.04,
+              scale: isHovered ? 1.1 : 1,
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            {String(index + 1).padStart(2, "0")}
+          </motion.span>
 
-        {/* Animated underline */}
-        <motion.div
-          className={`h-0.5 bg-gradient-to-r ${project.color} rounded-full`}
-          initial={{ width: 0 }}
-          animate={{ width: isHovered ? "40%" : "0%" }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        />
+          {/* Center arrow on hover */}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  className="w-20 h-20 rounded-full bg-primary flex items-center justify-center"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  transition={{ duration: 0.4, type: "spring", stiffness: 200, damping: 20 }}
+                >
+                  <ArrowUpRight className="w-7 h-7 text-primary-foreground" />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Category pill */}
+          <div className="absolute bottom-5 left-5">
+            <motion.span
+              className="inline-block px-4 py-1.5 rounded-full bg-background/70 backdrop-blur-md text-xs font-semibold uppercase tracking-widest text-foreground border border-border/50"
+              animate={{ y: isHovered ? -4 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {project.category}
+            </motion.span>
+          </div>
+        </div>
+
+        {/* Content side */}
+        <div className={`w-full md:w-[45%] flex flex-col justify-center ${isEven ? "md:pl-12 lg:pl-16" : "md:pr-12 lg:pr-16"} py-8 md:py-12`}>
+          {/* Year */}
+          <motion.span
+            className="text-muted-foreground text-sm font-mono tracking-widest mb-3"
+            animate={{ opacity: isHovered ? 1 : 0.6, x: isHovered ? 4 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            — {project.year}
+          </motion.span>
+
+          {/* Title */}
+          <motion.h3
+            className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight mb-4"
+            animate={{ x: isHovered ? 8 : 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {project.title}
+          </motion.h3>
+
+          {/* Animated line */}
+          <motion.div
+            className="h-[2px] bg-primary rounded-full mb-5"
+            initial={{ width: 0 }}
+            animate={{ width: isHovered ? "80px" : "40px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
+
+          {/* Description */}
+          <motion.p
+            className="text-muted-foreground text-base md:text-lg leading-relaxed mb-6 max-w-md"
+            animate={{ opacity: isHovered ? 1 : 0.7, x: isHovered ? 8 : 0 }}
+            transition={{ duration: 0.4, delay: 0.05 }}
+          >
+            {project.description}
+          </motion.p>
+
+          {/* View project link */}
+          <motion.div
+            className="flex items-center gap-2 text-primary font-semibold text-sm uppercase tracking-wider"
+            animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            <span>View Project</span>
+            <ExternalLink className="w-4 h-4" />
+          </motion.div>
+        </div>
       </div>
 
-      {/* Arrow button */}
-      <motion.div
-        className={`absolute bottom-6 right-6 md:bottom-8 md:right-8 w-12 h-12 rounded-full bg-gradient-to-br ${project.color} flex items-center justify-center shadow-lg`}
-        initial={{ scale: 0, rotate: -90 }}
-        animate={isHovered ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -90 }}
-        transition={{ duration: 0.4, type: "spring", stiffness: 260, damping: 20 }}
-      >
-        <ArrowUpRight className="w-5 h-5 text-foreground" />
-      </motion.div>
-
-      {/* Shine sweep */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent pointer-events-none"
-        animate={{ x: isHovered ? "200%" : "-100%", opacity: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
-      />
-
-      {/* Border glow */}
-      <motion.div
-        className="absolute inset-0 rounded-3xl pointer-events-none"
-        animate={{
-          boxShadow: isHovered
-            ? "inset 0 0 30px rgba(255,255,255,0.08), inset 0 0 0 2px rgba(255,255,255,0.15)"
-            : "inset 0 0 0px rgba(255,255,255,0), inset 0 0 0 0px rgba(255,255,255,0)",
-        }}
-        transition={{ duration: 0.4 }}
-      />
+      {/* Separator line */}
+      {index < projects.length - 1 && (
+        <motion.div
+          className="mt-12 md:mt-16 h-px bg-border/50"
+          initial={{ scaleX: 0 }}
+          animate={isInView ? { scaleX: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 * index + 0.5, ease: "easeOut" }}
+          style={{ originX: isEven ? 0 : 1 }}
+        />
+      )}
     </motion.div>
   );
 };
 
 const Portfolio = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section id="portfolio" className="section-padding relative overflow-hidden" ref={ref}>
-      {/* Ambient background blobs */}
+      {/* Subtle ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <motion.div
-          className="absolute top-20 -left-32 w-[500px] h-[500px] rounded-full bg-[hsl(15,90%,60%)]/5 blur-[150px]"
-          animate={{ scale: [1, 1.3, 1], x: [0, 40, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-20 -right-32 w-[400px] h-[400px] rounded-full bg-[hsl(260,80%,65%)]/5 blur-[120px]"
-          animate={{ scale: [1.2, 1, 1.2], y: [0, -30, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-primary/[0.03] blur-[150px]" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header */}
+        {/* Section header */}
         <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
+          className="flex flex-col md:flex-row md:items-end md:justify-between mb-20 md:mb-28 gap-6"
+          initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="text-primary font-medium tracking-widest uppercase text-sm mb-4">
-            Selected Work
-          </p>
-          <h2 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl">
-            Featured <span className="text-gradient">Projects</span>
-          </h2>
+          <div>
+            <motion.p
+              className="text-primary font-mono tracking-[0.3em] uppercase text-xs mb-5"
+              initial={{ opacity: 0, x: -20 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              Selected Work
+            </motion.p>
+            <h2 className="font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[0.95]">
+              Featured
+              <br />
+              <span className="text-gradient">Projects</span>
+            </h2>
+          </div>
+
+          <motion.p
+            className="text-muted-foreground text-lg max-w-sm leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            A curated selection of projects that showcase creative thinking and meticulous execution.
+          </motion.p>
         </motion.div>
 
-        {/* Projects Grid - masonry-style with large/small cards */}
-        <div className="grid md:grid-cols-2 gap-6" style={{ perspective: "1200px" }}>
+        {/* Top separator */}
+        <motion.div
+          className="h-px bg-border/50 mb-12 md:mb-16"
+          initial={{ scaleX: 0 }}
+          animate={isInView ? { scaleX: 1 } : {}}
+          transition={{ duration: 1, ease: "easeOut" }}
+          style={{ originX: 0 }}
+        />
+
+        {/* Projects list */}
+        <div className="space-y-12 md:space-y-16">
           {projects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} isInView={isInView} />
           ))}
@@ -235,24 +263,24 @@ const Portfolio = () => {
 
         {/* View All Button */}
         <motion.div
-          className="text-center mt-16"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8 }}
+          className="text-center mt-20 md:mt-28"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 1.2, duration: 0.6 }}
         >
           <motion.button
-            className="group relative px-10 py-4 border border-border text-foreground font-semibold rounded-full overflow-hidden"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="group relative px-12 py-5 border border-border text-foreground font-display font-semibold text-lg rounded-full overflow-hidden"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <span className="relative z-10 group-hover:text-background transition-colors duration-300">
+            <span className="relative z-10 group-hover:text-primary-foreground transition-colors duration-500">
               View All Projects
             </span>
             <motion.span
-              className="absolute inset-0 bg-gradient-to-r from-primary to-[hsl(35,95%,55%)]"
+              className="absolute inset-0 bg-primary"
               initial={{ scaleX: 0 }}
               whileHover={{ scaleX: 1 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               style={{ originX: 0 }}
             />
           </motion.button>
