@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Instagram, Dribbble, Linkedin, Twitter, ArrowUp, Mail, Phone, MapPin } from "lucide-react";
 import MagneticButton from "./MagneticButton";
+import logoImg from "@/assets/logo.png";
 
 const Footer = () => {
   const socialLinks = [
@@ -25,7 +26,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <MagneticButton href="#">
-              <span className="font-display font-bold text-4xl text-gradient">SK.</span>
+              <img src={logoImg} alt="SK Logo" className="h-14 w-auto" />
             </MagneticButton>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
               Creative designer based in Chennai, India — crafting bold visual experiences with 4+ years of expertise.
