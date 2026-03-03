@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import MagneticButton from "./MagneticButton";
+import logoImg from "@/assets/logo.png";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -35,7 +36,7 @@ const Navigation = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex items-center justify-between">
           {/* Logo */}
           <MagneticButton href="#">
-            <span className="font-display font-bold text-2xl text-gradient">SK.</span>
+            <img src={logoImg} alt="SK Logo" className="h-10 w-auto" />
           </MagneticButton>
 
           {/* Desktop Navigation */}
