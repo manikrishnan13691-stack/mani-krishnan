@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
+import CooperationProcess from "@/components/CooperationProcess";
 import About from "@/components/About";
 import Services from "@/components/Services";
 import OurApproach from "@/components/OurApproach";
@@ -29,6 +30,7 @@ const Index = () => {
         <CursorFollower />
         <Navigation />
         <Hero />
+        <CooperationProcess />
         <About />
         <Services />
         <OurApproach />
